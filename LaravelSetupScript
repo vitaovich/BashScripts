@@ -1,0 +1,61 @@
+##
+#Author: Vitaliy Alekhnovich
+#
+##
+
+
+#Install composer for laravel
+#Install php, mysql, and apache
+apt-get install composer php7.0 php7.0-mbstring php7.0-zip php7.0-xml php7.0-mcrypt apache2 libapache2-mod-php7.0 apache2-utils mysql-server phpmyadmin
+
+#Get laravel through composer
+composer global require "laravel/installer"
+
+#read in name of laravel project
+read -p "Enter a name for your laravel project:" pName
+
+#Configuration file for apache
+Config="<VirtualHost *:80>
+	ServerName localhost
+	DocumentRoot /var/www/html/$pName/public
+
+	<Directory /var/www/html/$pName>
+		AllowOverride All
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+"
+
+#Add laravel command to path
+#echo "PATH=$PATH:~/.config/composer/vendor/bin/" >> ~/.bashrc
+echo "PATH=$PATH:~/.composer/vendor/bin/" >> ~/.bashrc
+
+#Add phpmyadmin configuration to apache
+echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
+
+#Add configuration file for your laravel project
+printf "$Config" > /etc/apache2/sites-available/$pName.conf
+
+#Create laravel project
+mkdir ~/LaravelProjects
+cd ~/LaravelProjects
+~/.composer/vendor/bin/laravel new $pName
+
+#Symbolic link laravel project to apache
+ln -s ~/LaravelProjects/$pName /var/www/html/$pName
+
+#Set correct permissions
+chgrp -R www-data /var/www/html/$pName
+chmod -R 777 ~/LaravelProjects/$pName/storage
+
+#Disable default site
+a2dissite 000-default.conf
+
+#Enable your laravel project
+a2ensite $pName.conf
+
+#Start apache server
+service apache2 start
+service apache2 reload
