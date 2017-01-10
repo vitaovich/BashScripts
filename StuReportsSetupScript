@@ -23,8 +23,8 @@ Config="<VirtualHost *:80>
 		AllowOverride All
 	</Directory>
 
-	ErrorLog ~/$pName-error.log
-	CustomLog ~/$pName-access.log combined
+	ErrorLog /var/log/apache2/$pName-error.log
+	CustomLog /var/log/apache2/$pName-access.log combined
 </VirtualHost>
 "
 
@@ -42,6 +42,8 @@ printf "$Config" > /etc/apache2/sites-available/$pName.conf
 mkdir -p $HOME/$pPath
 cd $HOME/$pPath
 git clone https://github.com/vitaovich/StuReports.git
+cd $pName
+composer install
 
 #Symbolic link laravel project to apache
 ln -s $HOME/$pPath/$pName /var/www/html/$pName
@@ -49,6 +51,7 @@ ln -s $HOME/$pPath/$pName /var/www/html/$pName
 #Set correct permissions
 chgrp -R www-data /var/www/html/$pName
 chmod -R 777 $HOME/$pPath/$pName/storage
+chmod -R 777 $Home/$pPath/$pName/bootstrap/cache
 
 #Disable default site
 a2dissite 000-default.conf
@@ -57,5 +60,4 @@ a2dissite 000-default.conf
 a2ensite $pName.conf
 
 #Start apache server
-service apache2 reload
 service apache2 start
