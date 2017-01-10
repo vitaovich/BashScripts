@@ -12,6 +12,7 @@ apt-get install composer php7.0 php7.0-mbstring php7.0-zip php7.0-xml php7.0-mcr
 composer global require "laravel/installer"
 
 pName="StuReports"
+pPath="~/Github/repos"
 
 #Configuration file for apache
 Config="<VirtualHost *:80>
@@ -38,16 +39,16 @@ echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
 printf "$Config" > /etc/apache2/sites-available/$pName.conf
 
 #Create laravel project
-mkdir ~/Github/repos/
-cd ~/Github/repos/
+mkdir $pPath
+cd $pPath
 git clone https://github.com/vitaovich/StuReports.git
 
 #Symbolic link laravel project to apache
-ln -s ~/Github/repos/$pName /var/www/html/$pName
+ln -s $pPath/$pName /var/www/html/$pName
 
 #Set correct permissions
 chgrp -R www-data /var/www/html/$pName
-chmod -R 777 ~/LaravelProjects/$pName/storage
+chmod -R 777 $pPath/$pName/storage
 
 #Disable default site
 a2dissite 000-default.conf
