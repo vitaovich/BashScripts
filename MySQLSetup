@@ -42,7 +42,7 @@ CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_DRIVER=sync"
 
-printf "$env" > $HOME/Github/repos/StuReports/.env"
+printf "$env" > "$HOME/Github/repos/StuReports/.env"
 cd $HOME/Github/repos/StuReports/
 php artisan key:generate
 php artisan migrate

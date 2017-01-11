@@ -49,9 +49,12 @@ composer install
 ln -s $HOME/$pPath/$pName /var/www/html/$pName
 
 #Set correct permissions
+echo "Please enter name of current user"
+read currentUser
+chown -R $currentUser:$currentUser $HOME/$pPath/$pName
 chgrp -R www-data /var/www/html/$pName
 chmod -R 777 $HOME/$pPath/$pName/storage
-chmod -R 777 $Home/$pPath/$pName/bootstrap/cache
+chmod -R 777 $HOME/$pPath/$pName/bootstrap/cache
 
 #Disable default site
 a2dissite 000-default.conf
